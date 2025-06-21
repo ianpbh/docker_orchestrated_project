@@ -9,8 +9,12 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+
+  redis:
+    image: redis:7
 
   db:
     image: postgres:15
@@ -24,6 +28,14 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
 
+  celery:
+    build: ./backend
+    command: celery -A app.tasks worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - backend
+      - redis
   # frontend:
   #   build: ./frontend
   #   volumes:

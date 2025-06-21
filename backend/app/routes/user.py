@@ -10,23 +10,16 @@ from app.repositories.user import get_user_by_cpf
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 @router.post("/register", response_model=UserOut)
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    result = user_service.register_user(db, user.cpf, user.name, user.password)
+def register(user: UserCreate):
+    result = user_service.register_user(user.cpf, user.name, user.password)
     if not result:
         raise HTTPException(status_code=400, detail="User already exists")
     return result
 
 @router.post("/login")
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    db_user = get_user_by_cpf(db, user.cpf)
+def login(user: UserLogin):
+    db_user = get_user_by_cpf(user.cpf)
     if not db_user or not bcrypt.verify(user.password, db_user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_token({"sub": db_user.cpf})

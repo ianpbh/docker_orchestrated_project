@@ -3,7 +3,6 @@ from pydantic import BaseModel
 class TopicOut(BaseModel):
     id: int
     name: str
-    open: bool
     creator_id: int
 
     class Config:

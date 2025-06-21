@@ -10,14 +10,23 @@ INSERT INTO users (name, cpf, password) VALUES ('Admin', '12345678900', 'admin12
 CREATE TABLE IF NOT EXISTS topic (
   id SERIAL PRIMARY KEY,
   creator_id INTEGER REFERENCES users(id),
-  name TEXT NOT NULL,
-  open BOOLEAN DEFAULT TRUE
+  name TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS voting_session (
+CREATE TABLE IF NOT EXISTS session (
   id SERIAL PRIMARY KEY,
   topic_id INTEGER REFERENCES topic(id),
   user_id INTEGER REFERENCES users(id),
-  vote BOOLEAN NOT NULL,
+  creation_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  duration_time INTEGER NOT NULL,
+  finished BOOLEAN NOT NULL DEFAULT FALSE,
   UNIQUE(user_id, topic_id) 
+);
+
+CREATE TABLE IF NOT EXISTS vote (
+  id SERIAL PRIMARY KEY,
+  session_id INTEGER REFERENCES session(id),
+  user_id INTEGER REFERENCES users(id),
+  vote BOOLEAN NOT NULL,
+  voting_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

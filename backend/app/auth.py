@@ -13,13 +13,6 @@ EXPIRE_MINUTES = 60
 
 security = HTTPBearer()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 def create_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=EXPIRE_MINUTES)
@@ -33,10 +26,7 @@ def decode_token(token: str):
     except JWTError:
         return None
 
-def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    db=Depends(get_db)
-):
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     payload = decode_token(token)
     if not payload:
@@ -46,7 +36,7 @@ def get_current_user(
     if not cpf:
         raise HTTPException(status_code=401, detail="Invalid token payload")
     
-    user = get_user_by_cpf(db, cpf)
+    user = get_user_by_cpf(cpf)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
