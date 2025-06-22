@@ -17,3 +17,7 @@ def create_topic(creator_id: int, name: str):
 def list_topics():
     db = next(get_db())
     return db.query(Topic).all()
+
+def get_topic_by_id(topic_id: str):
+    db = next(get_db())
+    return db.query(Topic).filter(Topic.id == topic_id).first()

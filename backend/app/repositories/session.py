@@ -6,7 +6,8 @@ from app.database import get_db
 def create_session(topic_id: int, user_id: int, duration_time):
     db = next(get_db())
     existing_session = db.query(SessionModel).filter(
-        SessionModel.topic_id == topic_id
+        SessionModel.topic_id == topic_id,
+        SessionModel.finished == False
     ).first()
     if existing_session:
         raise HTTPException(
@@ -32,3 +33,10 @@ def finish_session(topic_id: int):
         db.refresh(session)
     else:
         print(f"Session with id {topic_id} not found.")
+
+def get_open_session_by_topic_id(topic_id: int):
+    db = next(get_db())
+    return db.query(SessionModel).filter(
+        SessionModel.topic_id == topic_id,
+        SessionModel.finished == False
+    ).first()
