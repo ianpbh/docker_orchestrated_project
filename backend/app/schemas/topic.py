@@ -6,7 +6,7 @@ class TopicOut(BaseModel):
     creator_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class TopicCreate(BaseModel):
     name: str

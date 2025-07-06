@@ -7,7 +7,7 @@ class SessionOut(BaseModel):
     duration_time: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SessionCreate(BaseModel):
     duration_time: int
